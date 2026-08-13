@@ -1,8 +1,9 @@
 const collectionService = require('../services/collectionService');
+const { insert } = require('../data/store');
 
 async function initiatePayment(req, res, next) {
   try {
-    const { amount, currency, payerPhone, payerMessage, payeeNote } = req.body;
+    const { amount, currency, payerPhone, payerMessage, payeeNote, userId } = req.body;
 
     if (!amount || !payerPhone) {
       return res.status(400).json({ error: 'amount and payerPhone are required' });
@@ -15,6 +16,17 @@ async function initiatePayment(req, res, next) {
       payerMessage: payerMessage || 'Payment via MoMo Mini App',
       payeeNote: payeeNote || 'Thank you',
     });
+
+    if (userId) {
+      insert('paymentTransactions', {
+        userId,
+        referenceId: result.referenceId,
+        amount,
+        status: 'PENDING',
+        purpose: payerMessage || 'Payment via MoMo Mini App',
+        createdAt: new Date().toISOString(),
+      });
+    }
 
     res.status(202).json({
       message: 'Payment request sent to payer for approval',
