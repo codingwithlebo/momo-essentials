@@ -1,5 +1,6 @@
 # momo-essentials
 
+
 MoMo Mini App Hackathon 2026 — backend
 
 ## Structure
@@ -29,3 +30,5 @@ tests/
 - `GET /api/health` — health check
 - `POST /api/payments/pay` — initiate a request-to-pay (`{ amount, currency, payerPhone, payerMessage, payeeNote }`)
 - `GET /api/payments/pay/:referenceId` — check transaction status
+=======
+MoMo Mini App Hackathon 2026
