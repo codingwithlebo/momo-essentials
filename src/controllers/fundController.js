@@ -1,4 +1,5 @@
 const fundService = require('../services/fundService');
+const { isValidAmount, isValidPhone } = require('../utils/validation');
 
 function listFunds(req, res) {
   res.json(fundService.getAllFunds());
@@ -15,6 +16,12 @@ async function contribute(req, res, next) {
     const { userId, amount, payerPhone } = req.body;
     if (!userId || !amount || !payerPhone) {
       return res.status(400).json({ error: 'userId, amount and payerPhone are required' });
+    }
+    if (!isValidAmount(amount)) {
+      return res.status(400).json({ error: 'amount must be a positive number' });
+    }
+    if (!isValidPhone(payerPhone)) {
+      return res.status(400).json({ error: 'payerPhone must be a valid MSISDN (digits only, 8-15 chars)' });
     }
 
     const result = await fundService.contributeToFund({

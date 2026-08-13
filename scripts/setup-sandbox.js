@@ -1,3 +1,10 @@
+// One-time helper: creates a MoMo Collections sandbox API user + API key.
+// Run this ONCE after subscribing to Collections on momodeveloper.mtn.com
+// and pasting your subscription key below (or via env var).
+//
+// Usage:
+//   MOMO_SUBSCRIPTION_KEY=your_primary_key node scripts/setup-sandbox.js
+
 const axios = require('axios');
 const { v4: uuidv4 } = require('uuid');
 
@@ -13,9 +20,10 @@ if (!subscriptionKey) {
 async function main() {
   const apiUser = uuidv4();
 
+  // Step 1: create the API user
   await axios.post(
     `${BASE_URL}/v1_0/apiuser`,
-    { providerCallbackHost: 'webhook.site' },
+    { providerCallbackHost: 'webhook.site' }, // placeholder, fine for sandbox
     {
       headers: {
         'X-Reference-Id': apiUser,
@@ -26,6 +34,7 @@ async function main() {
   );
   console.log('Created API User:', apiUser);
 
+  // Step 2: create the API key for that user
   const keyRes = await axios.post(
     `${BASE_URL}/v1_0/apiuser/${apiUser}/apikey`,
     {},
