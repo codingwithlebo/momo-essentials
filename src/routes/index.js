@@ -6,6 +6,7 @@ const dealRoutes = require('./dealRoutes');
 const questRoutes = require('./questRoutes');
 const rewardRoutes = require('./rewardRoutes');
 const fundRoutes = require('./fundRoutes');
+const merchantRoutes = require('./merchantRoutes');
 
 router.get('/health', (req, res) => res.json({ status: 'ok' }));
 
@@ -14,5 +15,6 @@ router.use('/deals', dealRoutes);
 router.use('/quests', questRoutes);
 router.use('/rewards', rewardRoutes);
 router.use('/funds', fundRoutes);
+router.use('/merchants', merchantRoutes);
 
 module.exports = router;
