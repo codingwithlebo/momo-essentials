@@ -8,13 +8,23 @@ function getAllQuests() {
 }
 
 // Completing a quest awards points and (optionally) triggers a MoMo
-// reward payout later. For now it just records the completion + points.
+// reward payout later. Guards against the same user completing the
+// same quest more than once.
 function completeQuest({ userId, questId }) {
   const quest = findById('quests', questId);
   if (!quest) throw new Error('Quest not found');
 
   const user = findById('users', userId);
   if (!user) throw new Error('User not found');
+
+  const alreadyCompleted = db.questCompletions.some(
+    (c) => c.userId === userId && c.questId === questId
+  );
+  if (alreadyCompleted) {
+    const err = new Error('Quest already completed by this user');
+    err.status = 409;
+    throw err;
+  }
 
   const completion = insert('questCompletions', {
     userId,
