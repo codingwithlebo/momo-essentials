@@ -50,3 +50,13 @@ export const completeQuest = (questId: string, userId: string) =>
     if (!res.ok) throw new Error(`Complete quest failed: ${res.status}`);
     return res.json();
   });
+export const contributeToFund = (fundId: string, userId: string, amount: number, payerPhone: string) =>
+  fetch(`${API_BASE}/funds/${fundId}/contribute`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ userId, amount, payerPhone }),
+  }).then(async (res) => {
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || `Contribute failed: ${res.status}`);
+    return data;
+  });

@@ -7,7 +7,7 @@ import QuestsScreen from "./components/quests/QuestsScreen";
 import RewardsScreen from "./components/rewards/RewardsScreen";
 import FundsScreen from "./components/funds/FundsScreen";
 import type { ScreenId, Deal, Quest, Fund } from "./types";
-import { fetchDeals, fetchQuests, fetchFunds, completeQuest } from "./lib/api";
+import { fetchDeals, fetchQuests, fetchFunds, completeQuest, contributeToFund } from "./lib/api";
 import { adaptDeal, adaptQuest, adaptFund } from "./lib/adapters";
 import {
   deals as mockDeals,
@@ -48,6 +48,21 @@ export default function App() {
     }
   };
 
+  const handleContribute = async (fundId: string, amount: number, payerPhone: string) => {
+    try {
+      const result = await contributeToFund(fundId, CURRENT_USER_ID, amount, payerPhone);
+      setFunds((prev) =>
+        prev.map((f) =>
+          f.id === fundId ? { ...f, raised: result.fund.currentAmount } : f
+        )
+      );
+      window.alert("Contribution sent! Approve it on your MoMo app (sandbox: auto-approves).");
+    } catch (err) {
+      console.error(err);
+      window.alert("Contribution failed — check the console for details.");
+    }
+  };
+
   return (
     <div className="mx-auto flex h-dvh max-w-[430px] flex-col bg-white">
       <AppHeader location="Johannesburg" points={walletSummary.totalPoints} />
@@ -67,7 +82,9 @@ export default function App() {
         {activeScreen === "rewards" && (
           <RewardsScreen wallet={walletSummary} activity={rewardActivity} />
         )}
-        {activeScreen === "funds" && <FundsScreen funds={funds} />}
+        {activeScreen === "funds" && (
+          <FundsScreen funds={funds} onContribute={handleContribute} />
+        )}
       </main>
       <BottomNav active={activeScreen} onNavigate={setActiveScreen} />
     </div>

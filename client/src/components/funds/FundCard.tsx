@@ -4,10 +4,29 @@ import ProgressBar from "../common/ProgressBar";
 
 interface FundCardProps {
   fund: Fund;
+  onContribute?: (fundId: string, amount: number, payerPhone: string) => void;
 }
 
-export default function FundCard({ fund }: FundCardProps) {
+export default function FundCard({ fund, onContribute }: FundCardProps) {
   const percent = Math.round((fund.raised / fund.goal) * 100);
+
+  const handleClick = () => {
+    const amountStr = window.prompt("How much would you like to contribute (R)?", "50");
+    if (!amountStr) return;
+    const amount = Number(amountStr);
+    if (isNaN(amount) || amount <= 0) {
+      window.alert("Please enter a valid amount.");
+      return;
+    }
+
+    const phone = window.prompt(
+      "Enter your MoMo number (sandbox test number: 46733123454)",
+      "46733123454"
+    );
+    if (!phone) return;
+
+    onContribute?.(fund.id, amount, phone);
+  };
 
   return (
     <div className="mb-3 rounded-[14px] bg-mtn-grey p-4">
@@ -20,14 +39,11 @@ export default function FundCard({ fund }: FundCardProps) {
           <div className="mt-0.5 text-[12px] text-mtn-grey-mid">{fund.daysLeft} days left</div>
         </div>
       </div>
-
       <div className="mb-0.5 flex items-baseline justify-between">
         <span className="font-display text-[16px] font-bold">R{fund.raised}</span>
         <span className="text-[12px] font-semibold text-mtn-grey-mid">of R{fund.goal}</span>
       </div>
-
       <ProgressBar percent={percent} />
-
       <div className="mt-2.5 flex items-center">
         {fund.contributorInitials.map((initial, index) => (
           <div
@@ -41,8 +57,7 @@ export default function FundCard({ fund }: FundCardProps) {
           {fund.contributorInitials.length} contributors
         </span>
       </div>
-
-      <Button variant="primary" className="mt-3">
+      <Button variant="primary" className="mt-3" onClick={handleClick}>
         Contribute with MoMo
       </Button>
     </div>
